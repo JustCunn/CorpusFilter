@@ -50,7 +50,7 @@ def duplicate_check(src, tgt):
         return True
 
 
-def sentence_ratio(src, tgt, threshold=0.7):
+def sentence_ratio(src, tgt, threshold=0.6):
     short, long = sorted([len(x) for x in [src, tgt]])
     print(short/long)
     if short/long < threshold:
@@ -59,8 +59,10 @@ def sentence_ratio(src, tgt, threshold=0.7):
         return True
 
 
-def length_check(src, tgt, threshold=25):
-    if len(src.split()) or len(tgt.split()) > threshold:
+def length_check(src, tgt, low_threshold=3, high_threshold=25):
+    len_s = len(src.split())
+    len_t = len(tgt.split())
+    if len_s < low_threshold or len_s > high_threshold or len_t < low_threshold or len_t > high_threshold:
         return False
     else:
         return True
@@ -112,26 +114,32 @@ def char_ratio_check(src, tgt):
 if __name__ == '__main__':
     with open(source, "r+") as f:
         for src_sent in f:
-            tgt_sent = linecache.getline("/home/justin/Documents/MyTgt", line_no(source, src_sent))
+            tgt_sent = linecache.getline(target, line_no(source, src_sent))
             tgt_sent = str1.join(tgt_sent)
-            copy_check(src_sent, tgt_sent)
-            if copy_check:
-                print("Yes")
-                duplicate_check(src_sent, tgt_sent)
+            print(src_sent+"\n"+tgt_sent)
+            if copy_check(src_sent, tgt_sent):
+                pass
             else:
-                break
+                print("Let's Continue - 1")
+                continue
 
-            if duplicate_check:
-                sentence_ratio(src_sent, tgt_sent)
+            if duplicate_check(src_sent, tgt_sent):
+                pass
             else:
-                break
+                print("Let's Continue - 2")
+                continue
 
-            if sentence_ratio:
-                length_check(src_sent, tgt_sent)
+            if sentence_ratio(src_sent, tgt_sent):
+                pass
             else:
-                break
+                print("Let's Continue - 3")
+                continue
 
-            if length_check:
-                char_ratio_check(src_sent, tgt_sent)
+            if length_check(src_sent, tgt_sent):
+                pass
             else:
-                break
+                print("Let's Continue - 4")
+                continue
+
+            char_ratio_check(src_sent, tgt_sent)
+
